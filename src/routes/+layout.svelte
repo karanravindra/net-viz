@@ -65,6 +65,7 @@
 	function resetView() {
 		updateInitialOffsets();
 		scale.set(1);
+		resizeHandler();
 	}
 	const circleRadius = 15;
 
@@ -73,6 +74,12 @@
 	let nodes: Node[] = [];
 	let links: Link[] = [];
 
+	let screenSize = { width: 0, height: 0 };
+
+	function resizeHandler() {
+		screenSize = { width: window.innerWidth, height: window.innerHeight };
+	}
+
 	// Node and link definitions
 	$: $layerConfig, ({ nodes, links } = regenerate(nodes, links, layerConfig));
 	$: $layerConfig, console.log($layerConfig);
@@ -80,6 +87,7 @@
 	$: onMount(() => {
 		setSvgElement(localSvgElement);
 		svgElement.set(localSvgElement);
+		resizeHandler();
 	});
 
 	let num_layers = 4;
@@ -208,7 +216,12 @@
 		class="h-full w-full cursor-grab overflow-hidden active:cursor-grabbing"
 		role="application"
 	>
-		<svg w="200" h="200" class="h-full w-full" bind:this={localSvgElement}>
+		<svg
+			w={screenSize.width}
+			h={screenSize.height}
+			class="h-full w-full"
+			bind:this={localSvgElement}
+		>
 			<g transform="translate({$offsetX}, {$offsetY}) scale({$scale})">
 				{#each links as link}
 					<line
